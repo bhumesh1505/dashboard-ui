@@ -12,7 +12,7 @@
     border-radius: 6px;
 }
 .daysImpactedContainer{
-    width: 460px;
+    width: 480px;
     margin-top: 20px;
 }
 .day{
@@ -42,11 +42,36 @@
 .windowsContainer{
     margin-top: 20px;
 }
-.notesHeading{
-    margin-top: 10px;
-}
 .windowDay{
     text-align: right;
+}
+
+
+.notesHeading{
+    margin-bottom: 5px;
+}
+.notesContainer{
+    margin-top: 10px;
+}
+.notes{
+    font-size: 12px;
+}
+.subHeading{
+    font-size: 12px;
+}
+.notesTimestamp{
+    text-align: right;
+    font-size: 12px;
+}
+.profileInfo{
+    font-size: 13px;
+    font-weight: 600;
+}
+.profileImage{
+    position: relative;
+    height: 25px;
+    width: auto;
+    top: -2px;
 }
 /* Switch css starts */
 .switch {
