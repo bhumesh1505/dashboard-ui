@@ -45,7 +45,7 @@ export default class AdjustCapacity extends React.Component{
                     "Sunday":"10"
                 }
             },
-            enterClicked:true,
+            enterClicked:false,
             stepperIndex:0,
             notes:""
         }
@@ -96,9 +96,9 @@ export default class AdjustCapacity extends React.Component{
 
     stopsPerDayEntered(event){
         let code = event.keyCode || event.which;
-        // 13 - enter
-        console.log("code ", code);
-        if(code === 13 && event.target.value !== "" ){
+
+        //13-enter
+        if(code === 13 && event.target.value !== "" && isNaN(event.target.value) === false ){
             let daysImpactedTemp = {};
             daysImpactedTemp["Monday"] = event.target.value;
             daysImpactedTemp["Tuesday"] = event.target.value;
@@ -144,7 +144,7 @@ export default class AdjustCapacity extends React.Component{
                             <input className={"inputBox"} value={this.state.stopsPerDay} onChange={this.onChangeStopsPerDay} onKeyPress={this.stopsPerDayEntered} type={"text"}/>
                         </div>
                         {
-                            this.state.stopsPerDay !== "" && this.state.enterClicked === true &&
+                            this.state.enterClicked === true &&
                             <div>
                                 <div className={"daysImpactedContainer"}>
                                     <div className={"DaysImpactedHeading adjustCapacityTitle"}>
