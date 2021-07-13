@@ -1,0 +1,122 @@
+.adjustCapacityContainer{
+    margin: auto;
+    width: 720px;
+    border: 1px solid black;
+    padding: 20px;
+}
+.inputBox{
+    height: 26px;
+    width:46px;
+    margin-top: 1px;
+    text-align: center;
+    border-radius: 6px;
+}
+.daysImpactedContainer{
+    width: 460px;
+    margin-top: 20px;
+}
+.day{
+    margin-left: 10px;
+}
+.DaysImpactedHeading{
+
+}
+.adjustCapacityTitle{
+    font-size: 17px;
+    font-weight: 700;
+}
+.stopsPerDayContainer{
+    margin-top: 20px;
+}
+.DaysImpactedRow{
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+.window{
+    margin-left: 10px;
+}
+.windowsRow{
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+.windowsContainer{
+    margin-top: 20px;
+}
+.notesHeading{
+    margin-top: 10px;
+}
+.windowDay{
+    text-align: right;
+}
+/* Switch css starts */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 25px;
+}
+
+.switch .toggle__input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .2s ease-in-out;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 2px;
+    bottom: 3px;
+    background-color: white;
+    transition: .2s ease-in-out;
+    border-radius: 50%;
+}
+
+.toggle__input:checked + .slider {
+    background-color: green;
+}
+
+.toggle__input:focus + .slider {
+    box-shadow: 0 0 1px green;
+}
+
+.toggle__input:checked + .slider:before{
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+.svg{
+    z-index: 100;
+    position: relative;
+    top: -1px;
+    right: 0;
+    fill: green;
+    transition: .2s ease-in-out;
+    height: 22px;
+    width: 22px;
+    opacity: 0;
+}
+
+.toggle__input:checked + .slider  .svg{
+    opacity: 1;
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+/* Switch css End */
