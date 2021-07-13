@@ -17,6 +17,7 @@
 }
 .day{
     margin-left: 10px;
+    font-size: 13px;
 }
 .DaysImpactedHeading{
 
@@ -34,6 +35,7 @@
 }
 .window{
     margin-left: 10px;
+    font-size: 13px;
 }
 .windowsRow{
     padding-bottom: 2px;
@@ -43,7 +45,10 @@
     margin-top: 20px;
 }
 .windowDay{
+    position: relative;
     text-align: right;
+    font-size: 13px;
+    top: 8px;
 }
 
 
