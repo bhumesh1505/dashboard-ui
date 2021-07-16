@@ -11,6 +11,13 @@
     text-align: center;
     border-radius: 6px;
 }
+.errorBox{
+    color:red;
+    border-color: red;
+}
+.redColor{
+    color: red;
+}
 .daysImpactedContainer{
     width: 480px;
     margin-top: 20px;
@@ -21,6 +28,14 @@
 }
 .DaysImpactedHeading{
 
+}
+.windowDaysWithError{
+    position: relative;
+    bottom: 8px;
+}
+.windowDaysWithNoError{
+    position: relative;
+    bottom: 25px;
 }
 .adjustCapacityTitle{
     font-size: 17px;

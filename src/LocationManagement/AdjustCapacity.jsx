@@ -6,7 +6,7 @@ export default class AdjustCapacity extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            stopsPerDay:"",
+            stopsPerDay:"50",
             daysImpacted:{
                 "Monday":"",
                 "Tuesday":"",
@@ -45,9 +45,19 @@ export default class AdjustCapacity extends React.Component{
                     "Sunday":"10"
                 }
             },
-            enterClicked:false,
-            stepperIndex:0,
-            notes:""
+            enterClicked:true,
+            stepperIndex:1,
+            notes:"",
+            errorDay:{
+                "Monday":false,
+                "Tuesday":false,
+                "Wednesday":false,
+                "Thursday":false,
+                "Friday":false,
+                "Saturday":false,
+                "Sunday":false
+            },
+            isError:false
         }
         this.handleDaysImpacted = this.handleDaysImpacted.bind(this);
         this.stopsPerDayEntered = this.stopsPerDayEntered.bind(this);
@@ -56,9 +66,29 @@ export default class AdjustCapacity extends React.Component{
         this.onChangeStopsPerDay = this.onChangeStopsPerDay.bind(this);
         this.handleWindowChange = this.handleWindowChange.bind(this);
         this.handleNotesChange = this.handleNotesChange.bind(this);
-
+        this.handleErrorMessage = this.handleErrorMessage.bind(this);
     }
-
+    handleErrorMessage(){
+        let days = ["Saturday","Monday","Tuesday","Wednesday","Thursday","Friday","Sunday"];
+        for (let i=0;i<days.length;i++){
+            if(parseInt(this.state.daysImpacted[days[i]]) !== parseInt(this.state.windows["Morning"][days[i]]) + parseInt(this.state.windows["Afternoon"][days[i]]) + parseInt(this.state.windows["AllDay"][days[i]])){
+                let errorDayTemp = this.state.errorDay;
+                errorDayTemp[days[i]] = true;
+                this.setState({errorDay:errorDayTemp,isError:true});
+            } else{
+                let errorDayTemp = this.state.errorDay;
+                errorDayTemp[days[i]] = false;
+                this.setState({errorDay:errorDayTemp});
+            }
+        }
+        let isAnyError = false;
+        for (let j=0;j<days.length;j++){
+            if(this.state.errorDay[days[j]] === true){
+                isAnyError = true;
+            }
+        }
+        this.setState({isError:isAnyError});
+    }
     gotoNextStep(){
         let stepperIndexInc = this.state.stepperIndex + 1;
         this.setState({stepperIndex:stepperIndexInc});
@@ -77,24 +107,26 @@ export default class AdjustCapacity extends React.Component{
             this.setState({windows:windowsTemp});
             console.log(num + " is a number");
         }
+        this.handleErrorMessage();
     }
     handleDaysImpacted(event,day){
         let daysImpacted = this.state.daysImpacted;
         daysImpacted[day]= event.target.value;
-        this.setState({daysImpacted:daysImpacted})
+        this.setState({daysImpacted:daysImpacted});
+        this.handleErrorMessage();
     }
 
     onChangeStopsPerDay(event){
-            let num = event.target.value;
-            if(isNaN(num) || num.length > 3){
-                console.log(num + " is not a number. maximum allowed length is 3");
-            }else{
-                this.setState({stopsPerDay: event.target.value})
-                console.log(num + " is a number");
-            }
+        let num = event.target.value;
+        if(isNaN(num) || num.length > 3){
+            console.log(num + " is not a number. maximum allowed length is 3");
+        }else{
+            this.setState({stopsPerDay: event.target.value})
+            console.log(num + " is a number");
+        }
     }
 
-    stopsPerDayEntered(event){
+    async stopsPerDayEntered(event){
         let code = event.keyCode || event.which;
 
         //13-enter
@@ -107,7 +139,8 @@ export default class AdjustCapacity extends React.Component{
             daysImpactedTemp["Friday"] = event.target.value;
             daysImpactedTemp["Saturday"] = event.target.value;
             daysImpactedTemp["Sunday"] = event.target.value;
-            this.setState({daysImpacted: daysImpactedTemp,enterClicked:true});
+            await this.setState({daysImpacted: daysImpactedTemp,enterClicked:true});
+            this.handleErrorMessage();
         }
     }
     handleNotesChange(){
@@ -168,8 +201,8 @@ export default class AdjustCapacity extends React.Component{
                                                     <span className={"day"}>Saturday</span>
                                                 </Col>
                                                 <Col xs={4}>
-                                                    <input className={"inputBox"} onChange={(event => {
-                                                        this.handleDaysImpacted(event, "Saturday")
+                                                    <input className={this.state.errorDay["Saturday"] === true ? "inputBox errorBox" : "inputBox"} onChange={(event => {
+                                                        this.handleDaysImpacted(event, "Saturday");
                                                     })} value={this.state.daysImpacted["Saturday"]} type={"text"}/>
                                                 </Col>
                                             </Row>
@@ -191,10 +224,10 @@ export default class AdjustCapacity extends React.Component{
                                                     <span className={"day"}>Wednesday</span>
                                                 </Col>
                                                 <Col xs={4}>
-                                                    <input className={"inputBox"}
+                                                    <input className={this.state.errorDay["Wednesday"] === true ? "inputBox errorBox" : "inputBox"}
                                                            value={this.state.daysImpacted["Wednesday"]}
                                                            onChange={(event => {
-                                                               this.handleDaysImpacted(event, "Wednesday")
+                                                               this.handleDaysImpacted(event, "Wednesday");
                                                            })} type={"text"}/>
                                                 </Col>
                                             </Row>
@@ -219,10 +252,10 @@ export default class AdjustCapacity extends React.Component{
                                                     <span className={"day"}>Sunday</span>
                                                 </Col>
                                                 <Col xs={4}>
-                                                    <input className={"inputBox"}
+                                                    <input className={this.state.errorDay["Sunday"] === true ? "inputBox errorBox" : "inputBox"}
                                                            value={this.state.daysImpacted["Sunday"]}
                                                            onChange={(event => {
-                                                               this.handleDaysImpacted(event, "Sunday")
+                                                               this.handleDaysImpacted(event, "Sunday");
                                                            })} type={"text"}/>
                                                 </Col>
                                             </Row>
@@ -244,10 +277,10 @@ export default class AdjustCapacity extends React.Component{
                                                     <span className={"day"}>Thursday</span>
                                                 </Col>
                                                 <Col xs={4}>
-                                                    <input className={"inputBox"}
+                                                    <input className={this.state.errorDay["Thursday"] === true ? "inputBox errorBox" : "inputBox"}
                                                            value={this.state.daysImpacted["Thursday"]}
                                                            onChange={(event => {
-                                                               this.handleDaysImpacted(event, "Thursday")
+                                                               this.handleDaysImpacted(event, "Thursday");
                                                            })} type={"text"}/>
                                                 </Col>
                                             </Row>
@@ -272,10 +305,10 @@ export default class AdjustCapacity extends React.Component{
                                                     <span className={"day"}>Monday</span>
                                                 </Col>
                                                 <Col xs={4}>
-                                                    <input className={"inputBox"}
+                                                    <input className={this.state.errorDay["Monday"] === true ? "inputBox errorBox" : "inputBox"}
                                                            value={this.state.daysImpacted["Monday"]}
                                                            onChange={(event => {
-                                                               this.handleDaysImpacted(event, "Monday")
+                                                               this.handleDaysImpacted(event, "Monday");
                                                            })} type={"text"}/>
                                                 </Col>
                                             </Row>
@@ -297,10 +330,10 @@ export default class AdjustCapacity extends React.Component{
                                                     <span className={"day"}>Friday</span>
                                                 </Col>
                                                 <Col xs={4}>
-                                                    <input className={"inputBox"}
+                                                    <input className={this.state.errorDay["Friday"] === true ? "inputBox errorBox" : "inputBox"}
                                                            value={this.state.daysImpacted["Friday"]}
                                                            onChange={(event => {
-                                                               this.handleDaysImpacted(event, "Friday")
+                                                               this.handleDaysImpacted(event, "Friday");
                                                            })} type={"text"}/>
                                                 </Col>
                                             </Row>
@@ -325,10 +358,10 @@ export default class AdjustCapacity extends React.Component{
                                                     <span className={"day"}>Tuesday</span>
                                                 </Col>
                                                 <Col xs={4}>
-                                                    <input className={"inputBox"}
+                                                    <input className={this.state.errorDay["Tuesday"] === true ? "inputBox errorBox" : "inputBox"}
                                                            value={this.state.daysImpacted["Tuesday"]}
                                                            onChange={(event => {
-                                                               this.handleDaysImpacted(event, "Tuesday")
+                                                               this.handleDaysImpacted(event, "Tuesday");
                                                            })} type={"text"}/>
                                                 </Col>
                                             </Row>
@@ -341,6 +374,18 @@ export default class AdjustCapacity extends React.Component{
                                             <div className={"DaysImpactedHeading adjustCapacityTitle"}>
                                                 Windows
                                             </div>
+                                        </Col>
+                                    </Row>
+                                    {
+                                        this.state.isError === true &&
+                                        <Row>
+                                            <Col className={"redColor"}>
+                                                Window quantities do not equal stops per day.
+                                            </Col>
+                                        </Row>
+                                    }
+                                    <Row className={ this.state.isError === true ? "windowDaysWithError" : "windowDaysWithNoError"}>
+                                        <Col xs={4}>
                                         </Col>
                                         <Col xs={1} className={"windowDay"}>
                                             Sat
@@ -380,25 +425,25 @@ export default class AdjustCapacity extends React.Component{
                                             <span className={"window"}>Morning (8a-12p)</span>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Morning"]["Saturday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Saturday") })} type={"text"}/>
+                                            <input className={this.state.errorDay["Saturday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Morning"]["Saturday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Saturday"); })} type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Morning"]["Sunday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Sunday") })} type={"text"}/>
+                                            <input className={this.state.errorDay["Sunday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Morning"]["Sunday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Sunday"); })} type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Morning"]["Monday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Monday") })} type={"text"}/>
+                                            <input className={this.state.errorDay["Monday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Morning"]["Monday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Monday");})} type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Morning"]["Tuesday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Tuesday") })} type={"text"}/>
+                                            <input className={this.state.errorDay["Tuesday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Morning"]["Tuesday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Tuesday"); })} type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Morning"]["Wednesday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Wednesday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Wednesday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Morning"]["Wednesday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Wednesday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Morning"]["Thursday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Thursday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Thursday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Morning"]["Thursday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Thursday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Morning"]["Friday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Friday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Friday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Morning"]["Friday"]} onChange={(event => { this.handleWindowChange(event,"Morning","Friday"); })}  type={"text"}/>
                                         </Col>
                                     </Row>
                                     <Row className={"windowsRow"}>
@@ -417,25 +462,25 @@ export default class AdjustCapacity extends React.Component{
                                             <span className={"window"}>Afternoon (12p-4p)</span>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Afternoon"]["Saturday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Saturday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Saturday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Afternoon"]["Saturday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Saturday");})}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Afternoon"]["Sunday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Sunday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Sunday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Afternoon"]["Sunday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Sunday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Afternoon"]["Monday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Monday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Monday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Afternoon"]["Monday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Monday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Afternoon"]["Tuesday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Tuesday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Tuesday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Afternoon"]["Tuesday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Tuesday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Afternoon"]["Wednesday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Wednesday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Wednesday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Afternoon"]["Wednesday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Wednesday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Afternoon"]["Thursday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Thursday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Thursday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Afternoon"]["Thursday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Thursday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["Afternoon"]["Friday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Friday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Friday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["Afternoon"]["Friday"]} onChange={(event => { this.handleWindowChange(event,"Afternoon","Friday"); })}  type={"text"}/>
                                         </Col>
                                     </Row>
                                     <Row className={"windowsRow"}>
@@ -454,25 +499,25 @@ export default class AdjustCapacity extends React.Component{
                                             <span className={"window"}>All Day (8a-8p)</span>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["AllDay"]["Saturday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Saturday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Saturday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["AllDay"]["Saturday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Saturday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["AllDay"]["Sunday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Sunday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Sunday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["AllDay"]["Sunday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Sunday"); })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["AllDay"]["Monday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Monday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Monday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["AllDay"]["Monday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Monday");  })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["AllDay"]["Tuesday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Tuesday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Tuesday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["AllDay"]["Tuesday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Tuesday");  })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["AllDay"]["Wednesday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Wednesday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Wednesday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["AllDay"]["Wednesday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Wednesday");  })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["AllDay"]["Thursday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Thursday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Thursday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["AllDay"]["Thursday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Thursday");  })}  type={"text"}/>
                                         </Col>
                                         <Col xs={1}>
-                                            <input className={"inputBox"} value={this.state.windows["AllDay"]["Friday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Friday") })}  type={"text"}/>
+                                            <input className={this.state.errorDay["Friday"] === true ? "inputBox errorBox" : "inputBox"} value={this.state.windows["AllDay"]["Friday"]} onChange={(event => { this.handleWindowChange(event,"AllDay","Friday"); })}  type={"text"}/>
                                         </Col>
                                     </Row>
                                 </div>
