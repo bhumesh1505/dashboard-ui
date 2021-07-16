@@ -6,7 +6,7 @@ export default class AdjustCapacity extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            stopsPerDay:"50",
+            stopsPerDay:"",
             daysImpacted:{
                 "Monday":"",
                 "Tuesday":"",
@@ -45,7 +45,7 @@ export default class AdjustCapacity extends React.Component{
                     "Sunday":"10"
                 }
             },
-            enterClicked:true,
+            enterClicked:false,
             stepperIndex:1,
             notes:"",
             errorDay:{
